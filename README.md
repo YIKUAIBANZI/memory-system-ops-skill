@@ -1,6 +1,11 @@
 # memory-system-ops
 
+[![GitHub stars](https://img.shields.io/github/stars/YIKUAIBANZI/memory-system-ops-skill?style=social)](https://github.com/YIKUAIBANZI/memory-system-ops-skill/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/YIKUAIBANZI/memory-system-ops-skill?style=social)](https://github.com/YIKUAIBANZI/memory-system-ops-skill/network/members)
+
 A practical AgentSkill for operating a **fast + accurate + verifiable** personal memory system.
+
+> 如果这个项目对你有帮助，欢迎点个 ⭐ Star。
 
 This skill is designed for assistants that need to:
 - keep daily memory clean and queryable,
@@ -164,6 +169,13 @@ Suggested release checklist:
 - [ ] Confirm no path assumptions break target environment
 
 ---
+
+## Support
+
+If you want to help this project grow:
+- ⭐ Star this repo
+- 🔁 Share it with builders using OpenClaw / agent workflows
+- 🧪 Open an issue with your real-world memory failure pattern
 
 ## License
 
