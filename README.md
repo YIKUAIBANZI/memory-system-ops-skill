@@ -2,16 +2,26 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/YIKUAIBANZI/memory-system-ops-skill?style=social)](https://github.com/YIKUAIBANZI/memory-system-ops-skill/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/YIKUAIBANZI/memory-system-ops-skill?style=social)](https://github.com/YIKUAIBANZI/memory-system-ops-skill/network/members)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 A practical AgentSkill for operating a **fast + accurate + verifiable** personal memory system.
 
 > 如果这个项目对你有帮助，欢迎点个 ⭐ Star。
 
-This skill is designed for assistants that need to:
-- keep daily memory clean and queryable,
-- prevent "you forgot" failures,
-- maintain a strict active task board,
-- and evolve memory rules without polluting user profile files.
+---
+
+## Who this is for
+
+This project is useful if you are building assistants with:
+- **OpenClaw**
+- **Claude / GPT style agents**
+- **Cursor + agent workflows**
+
+Use it when your assistant suffers from:
+- “you forgot” loops,
+- messy profile/memory/task files,
+- low-confidence historical recall,
+- or task boards that never get cleaned.
 
 ---
 
@@ -68,28 +78,70 @@ For key items, always write:
 
 ---
 
+## What is in `SKILL.md`?
+
+`SKILL.md` contains the executable operating policy.
+
+Minimal structure:
+
+```yaml
+---
+name: memory-system-ops
+description: Operate a fast and reliable personal memory system...
+---
+```
+
+Core instructions include:
+- 3-layer memory model (`USER.md` / daily memory / `TASKS.md`)
+- strict daily write-back fields (`Decision/Why/Impact/Next/Verify`)
+- retrieval fallback (`L1 -> L2 -> L3`)
+- task board rules for `在做/就绪/中断`
+- keyword tracking update after each daily write-back
+
+If you want full details, read [`SKILL.md`](./SKILL.md).
+
+---
+
+## Real usage snippets
+
+### 1) Daily memory snippet
+
+```markdown
+- Decision: 将书单推送时间改为 13:00。
+- Why: 用户明确要求中午接收，晚间打扰较强。
+- Impact: 日程和触达体验更稳定。
+- Next: 连续观察 7 天打开率。
+- Verify: 3/6-3/12 推送日志显示按时执行。
+```
+
+### 2) TASKS board snippet
+
+```markdown
+| 状态 | 任务ID | 任务 | 说明 | 下一步 | Blocked by | Resume step |
+|---|---|---|---|---|---|---|
+| 在做 | T-250307-01 | 词汇资料整理 | 汇总六级+考研词汇 | 完成去重并导出CSV | - | - |
+| 中断 | T-250307-02 | 远端部署 | 需要服务器权限 | 等待SSH授权 | 缺少root权限 | 拿到密钥后执行deploy.sh |
+```
+
+More templates:
+- [`references/daily-template.md`](./references/daily-template.md)
+- [`references/tasks-template.md`](./references/tasks-template.md)
+- [`references/workflow.md`](./references/workflow.md)
+
+---
+
 ## Repository structure
 
 ```text
 memory-system-ops/
 ├── SKILL.md
 ├── README.md
+├── LICENSE
 └── references/
     ├── workflow.md
     ├── daily-template.md
     └── tasks-template.md
 ```
-
----
-
-## Included references
-
-- `references/workflow.md`
-  - End-to-end operational workflow
-- `references/daily-template.md`
-  - Structured daily memory template
-- `references/tasks-template.md`
-  - Active task board schema and archive rules
 
 ---
 
@@ -156,27 +208,21 @@ If your project uses different paths, keep the same logic and update references 
 
 ---
 
-## Versioning recommendation
+## Distribution tips (early-stage projects)
 
-Use semantic versioning for this skill:
-- `v0.x` for rapid iteration
-- `v1.0` when workflow is stable across multiple sessions/projects
+If you want early traction, publish short case studies in:
+- Claude / OpenAI related communities
+- Reddit (`r/AIAssistants`, `r/LocalLLaMA`, etc.)
+- V2EX / X threads
 
-Suggested release checklist:
-- [ ] Validate SKILL structure
-- [ ] Test retrieval fallback behavior
-- [ ] Test task archive workflow
-- [ ] Confirm no path assumptions break target environment
+Useful post format:
+1. What concrete failure it solves (“you forgot”)
+2. Before/after behavior
+3. 1-minute setup steps
+4. Link to examples/templates
 
 ---
 
-## Support
-
-If you want to help this project grow:
-- ⭐ Star this repo
-- 🔁 Share it with builders using OpenClaw / agent workflows
-- 🧪 Open an issue with your real-world memory failure pattern
-
 ## License
 
-Add your preferred license if needed.
+This project is licensed under the **MIT License**. See [`LICENSE`](./LICENSE).
