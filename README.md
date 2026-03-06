@@ -36,6 +36,16 @@ Typical long-running assistant problems:
 
 `memory-system-ops` addresses these with a layered model, strict write-back structure, retrieval fallback order, and task archive discipline.
 
+### Extra highlight: high-frequency vocabulary organization & lookup
+
+This skill also works well for language-learning workflows (e.g., CET-6 / Kaoyan):
+- keep a structured vocabulary project log in `memory/YYYY-MM-DD.md`,
+- track recurring terms with `memory/keyword-frequency.md`,
+- preserve active study actions in `TASKS.md` (`在做 / 就绪 / 中断`),
+- quickly answer “这个词之前看过吗/出现过几次？” using the retrieval fallback path.
+
+This turns ad-hoc word collection into a searchable, verifiable study memory system.
+
 ---
 
 ## Core design
