@@ -7,6 +7,24 @@ description: Operate a fast and reliable personal memory system using layered no
 
 Run this skill when the user asks to improve, audit, or maintain memory quality.
 
+## Strict Runbook (for weaker agents)
+
+When this skill is triggered, execute in this order:
+
+1. Read current state files:
+   - `USER.md`
+   - `TASKS.md`
+   - `memory/YYYY-MM-DD.md` (today)
+2. If user asks about past facts, use retrieval fallback `L1 -> L2 -> L3` before answering.
+3. For every important new decision, append one structured block:
+   - `Decision / Why / Impact / Next / Verify`
+4. Update `TASKS.md` with only `在做 / 就绪 / 中断`.
+   - If `中断`, must fill `Blocked by` and `Resume step`.
+5. After memory write-back, update `memory/keyword-frequency.md`.
+6. Reply with verifiable evidence (file path + what changed), not vague claims.
+
+Never skip step 2 for historical recall questions.
+
 ## Core Model
 
 Use 3 layers:

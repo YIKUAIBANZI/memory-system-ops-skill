@@ -110,6 +110,14 @@ Core instructions include:
 
 If you want full details, read [`SKILL.md`](./SKILL.md).
 
+### FAQ: Why is it always named `SKILL.md`? Will it conflict?
+
+- `SKILL.md` is the **required entry filename** in this ecosystem.
+- Conflicts do **not** happen by filename, because each skill lives in its own folder:
+  - `skills/memory-system-ops/SKILL.md`
+  - `skills/another-skill/SKILL.md`
+- Runtime matching is based on frontmatter `name` + `description`, not only filename.
+
 ---
 
 ## Real usage snippets
