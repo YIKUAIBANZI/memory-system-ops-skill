@@ -36,6 +36,16 @@ Typical long-running assistant problems:
 
 `memory-system-ops` addresses these with a layered model, strict write-back structure, retrieval fallback order, and task archive discipline.
 
+## Must-know capabilities (重点能力)
+
+1. **Date-based recall**: retrieve by specific day (`memory/YYYY-MM-DD.md`).
+2. **Keyword-based recall**: retrieve by keyword/alias across days (not only by date).
+3. **High-frequency keyword tracking**: maintain `memory/keyword-frequency.md` for fast lookup and trend review.
+4. **Task-state memory**: keep active execution state in `TASKS.md` (`在做/就绪/中断`).
+5. **Evidence-first answers**: always provide file path + verification context.
+
+> If an agent only does date-based lookup and ignores keyword lookup, it is using this skill incorrectly.
+
 ### Extra highlight: high-frequency vocabulary organization & lookup
 
 This skill also works well for language-learning workflows (e.g., CET-6 / Kaoyan):
@@ -105,6 +115,7 @@ Core instructions include:
 - 3-layer memory model (`USER.md` / daily memory / `TASKS.md`)
 - strict daily write-back fields (`Decision/Why/Impact/Next/Verify`)
 - retrieval fallback (`L1 -> L2 -> L3`)
+- **keyword-first lookup support** (for questions like “这个词之前出现过几次/在哪聊过”)
 - task board rules for `在做/就绪/中断`
 - keyword tracking update after each daily write-back
 

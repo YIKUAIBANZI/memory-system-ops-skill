@@ -16,6 +16,10 @@ When this skill is triggered, execute in this order:
    - `TASKS.md`
    - `memory/YYYY-MM-DD.md` (today)
 2. If user asks about past facts, use retrieval fallback `L1 -> L2 -> L3` before answering.
+   - If the question is keyword-driven (e.g. “高频词/关键词/这个词出现几次/聊天记录里提过吗”), do keyword-first lookup:
+     1) check `memory/keyword-frequency.md`,
+     2) then scan `memory/*.md` for context,
+     3) then fallback to `agent-memory/chat/*` if still low confidence.
 3. For every important new decision, append one structured block:
    - `Decision / Why / Impact / Next / Verify`
 4. Update `TASKS.md` with only `在做 / 就绪 / 中断`.
@@ -51,6 +55,13 @@ When the user reports memory mismatch ("你没记住"), immediately show the exa
 1. L1: today memory + task board
 2. L2: `memory/*.md`
 3. L3: `agent-memory/chat/daily -> weekly -> monthly` (when low confidence)
+
+### Keyword-first rule (must apply)
+
+For keyword questions, do this before final answer:
+1. Read `memory/keyword-frequency.md` for candidate terms and counts.
+2. Locate matching daily entries in `memory/*.md`.
+3. Return concrete path evidence (where the keyword/decision appears).
 
 Always prefer verified answers over guessed answers.
 
