@@ -1,6 +1,6 @@
 ---
 name: memory-system-ops
-description: Operate a fast and reliable personal memory system using layered notes, structured daily entries, task board discipline, keyword frequency tracking, and retrieval fallback rules. Use when setting up or maintaining memory files, debugging "you forgot" issues, improving recall speed/accuracy, or enforcing daily write-back and task archive workflows.
+description: Operate a fast and reliable personal memory system using layered notes, structured daily entries, task board discipline, keyword frequency tracking, retrieval fallback rules, and evidence-first answers. Use when setting up or maintaining memory files, debugging "you forgot" issues, improving recall speed/accuracy, or enforcing daily write-back and task archive workflows.
 ---
 
 # Memory System Ops
@@ -15,19 +15,29 @@ When this skill is triggered, execute in this order:
    - `USER.md`
    - `TASKS.md`
    - `memory/YYYY-MM-DD.md` (today)
-2. If user asks about past facts, use retrieval fallback `L1 -> L2 -> L3` before answering.
-   - If the question is keyword-driven (e.g. “高频词/关键词/这个词出现几次/聊天记录里提过吗”), do keyword-first lookup:
-     1) check `memory/keyword-frequency.md`,
-     2) then scan `memory/*.md` for context,
-     3) then fallback to `agent-memory/chat/*` if still low confidence.
-3. For every important new decision, append one structured block:
+   - optional: `agent-memory/common-info.md`
+2. Set retrieval scope before searching (when applicable):
+   - user / project / session / date range
+   - avoid global scans if a narrower scope is enough.
+3. Retrieve with efficiency gates (must follow):
+   - **L1**: today memory + task board (+ `memory/keyword-frequency.md` for keyword questions)
+   - run a sufficiency check: if answer is already supported by evidence, stop here
+   - **L2**: scan `memory/*.md` only when L1 is insufficient
+   - run a sufficiency check again
+   - **L3**: fallback to `agent-memory/chat/daily -> weekly -> monthly` only when confidence remains low
+4. For every important new decision, append one structured block:
    - `Decision / Why / Impact / Next / Verify`
-4. Update `TASKS.md` with only `在做 / 就绪 / 中断`.
+   - optional but recommended: `RefID / Scope / Confidence / Tags / Aliases`
+5. Update `TASKS.md` with only `在做 / 就绪 / 中断`.
    - If `中断`, must fill `Blocked by` and `Resume step`.
-5. After memory write-back, update `memory/keyword-frequency.md`.
-6. Reply with verifiable evidence (file path + what changed), not vague claims.
+6. After memory write-back, update `memory/keyword-frequency.md`.
+7. If the same rule/decision repeats >=3 times, compact and promote:
+   - long-term preference -> `USER.md`
+   - operational rule -> `agent-memory/common-info.md`
+   - keep a reference link to original daily entries.
+8. Reply with verifiable evidence (file path + what changed), not vague claims.
 
-Never skip step 2 for historical recall questions.
+Never skip step 3 for historical recall questions.
 
 ## Core Model
 
@@ -46,7 +56,7 @@ For key events, write:
 - `Impact`
 - `Next`
 - `Verify`
-- optional `Tags`, `Aliases`
+- optional: `RefID`, `Scope`, `Confidence`, `Tags`, `Aliases`
 
 When the user reports memory mismatch ("你没记住"), immediately show the exact stored location and verify against file content.
 
@@ -64,6 +74,19 @@ For keyword questions, do this before final answer:
 3. Return concrete path evidence (where the keyword/decision appears).
 
 Always prefer verified answers over guessed answers.
+
+## Efficiency Enhancements (memU-inspired)
+
+1. **Pipeline stages, not one-shot search**
+   - Run retrieval as staged execution (L1/L2/L3 + sufficiency checks).
+2. **Scope guard first**
+   - Narrow `where` scope before retrieval to reduce noise and latency.
+3. **Sufficiency gate**
+   - Stop retrieval once evidence is enough; avoid expensive unnecessary scans.
+4. **Reference-friendly write-back**
+   - Add short `RefID` in important entries so later answers can cite quickly.
+5. **Reinforcement + compaction**
+   - Repeated decisions should be promoted to stable layers to prevent daily-file bloat.
 
 ## Task Board Rules
 
@@ -89,3 +112,4 @@ Always prefer verified answers over guessed answers.
 - Workflow details: `references/workflow.md`
 - Daily template: `references/daily-template.md`
 - Task board template: `references/tasks-template.md`
+- Efficiency notes: `references/efficiency-upgrades.md`

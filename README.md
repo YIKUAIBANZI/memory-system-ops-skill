@@ -43,6 +43,9 @@ Typical long-running assistant problems:
 3. **High-frequency keyword tracking**: maintain `memory/keyword-frequency.md` for fast lookup and trend review.
 4. **Task-state memory**: keep active execution state in `TASKS.md` (`在做/就绪/中断`).
 5. **Evidence-first answers**: always provide file path + verification context.
+6. **Scope-guard retrieval**: narrow by user/project/date-range before broad scans.
+7. **Sufficiency-gated fallback**: stop at L1/L2 once evidence is enough; go to L3 only when needed.
+8. **Reference-friendly write-back**: optional `RefID` enables fast citation and audit trails.
 
 > If an agent only does date-based lookup and ignores keyword lookup, it is using this skill incorrectly.
 
@@ -55,6 +58,17 @@ This skill also works well for language-learning workflows (e.g., CET-6 / Kaoyan
 - quickly answer “这个词之前看过吗/出现过几次？” using the retrieval fallback path.
 
 This turns ad-hoc word collection into a searchable, verifiable study memory system.
+
+### Efficiency upgrades inspired by memU
+
+This skill now integrates lightweight versions of high-leverage memory patterns:
+- **Pipeline retrieval**: staged L1/L2/L3 instead of one-shot global search.
+- **Scope guard**: define retrieval boundaries before searching.
+- **Sufficiency gate**: stop once evidence is enough.
+- **Reference IDs**: attach stable short ids for fast citation.
+- **Compaction rules**: repeated rules migrate to stable layers to reduce drift.
+
+These upgrades improve both recall speed and answer reliability without requiring a heavy database stack.
 
 ---
 
@@ -75,13 +89,17 @@ For key items, always write:
 - `Impact`
 - `Next`
 - `Verify`
-- optional: `Tags`, `Aliases`
+- optional: `RefID`, `Scope`, `Confidence`, `Tags`, `Aliases`
 
-### 3) Retrieval fallback order
+### 3) Retrieval fallback order (with sufficiency gate)
 
-- **L1**: today memory + task board
+- **L1**: today memory + task board (+ keyword-frequency for keyword queries)
+- sufficiency check: if evidence is enough, stop
 - **L2**: `memory/*.md`
-- **L3**: `agent-memory/chat/daily -> weekly -> monthly` (when confidence is low)
+- sufficiency check again
+- **L3**: `agent-memory/chat/daily -> weekly -> monthly` (only when confidence is still low)
+
+Always set retrieval scope first (user/project/date range) before moving to broader layers.
 
 ### 4) Task board discipline
 
@@ -114,10 +132,12 @@ description: Operate a fast and reliable personal memory system...
 Core instructions include:
 - 3-layer memory model (`USER.md` / daily memory / `TASKS.md`)
 - strict daily write-back fields (`Decision/Why/Impact/Next/Verify`)
-- retrieval fallback (`L1 -> L2 -> L3`)
+- retrieval fallback (`L1 -> L2 -> L3`) with sufficiency checks
+- scope guard before broad retrieval (user/project/date range)
 - **keyword-first lookup support** (for questions like “这个词之前出现过几次/在哪聊过”)
 - task board rules for `在做/就绪/中断`
 - keyword tracking update after each daily write-back
+- optional `RefID` for evidence-first citation
 
 If you want full details, read [`SKILL.md`](./SKILL.md).
 
@@ -136,11 +156,14 @@ If you want full details, read [`SKILL.md`](./SKILL.md).
 ### 1) Daily memory snippet
 
 ```markdown
+- RefID: D-2026-03-07-01
 - Decision: 将书单推送时间改为 13:00。
 - Why: 用户明确要求中午接收，晚间打扰较强。
 - Impact: 日程和触达体验更稳定。
 - Next: 连续观察 7 天打开率。
 - Verify: 3/6-3/12 推送日志显示按时执行。
+- Scope: user=yikuai-banz
+- Confidence: high
 ```
 
 ### 2) TASKS board snippet
@@ -156,6 +179,7 @@ More templates:
 - [`references/daily-template.md`](./references/daily-template.md)
 - [`references/tasks-template.md`](./references/tasks-template.md)
 - [`references/workflow.md`](./references/workflow.md)
+- [`references/efficiency-upgrades.md`](./references/efficiency-upgrades.md)
 
 ---
 
@@ -169,7 +193,8 @@ memory-system-ops/
 └── references/
     ├── workflow.md
     ├── daily-template.md
-    └── tasks-template.md
+    ├── tasks-template.md
+    └── efficiency-upgrades.md
 ```
 
 ---
@@ -195,11 +220,13 @@ Then place or symlink it into your agent skills path.
 ## Suggested operating loop
 
 1. Read current context (`USER.md`, `TASKS.md`, today memory, common-info)
-2. Execute task / respond to user
-3. Write structured decision to daily memory
-4. Update task board state
-5. Archive completed tasks
-6. Run keyword tracking update (event-driven)
+2. Set retrieval scope (user/project/date range)
+3. Retrieve with staged gates (L1 -> L2 -> L3, stop early when evidence is enough)
+4. Execute task / respond to user
+5. Write structured decision to daily memory (optional `RefID/Scope/Confidence`)
+6. Update task board state
+7. Archive completed tasks
+8. Run keyword tracking update (event-driven)
 
 ---
 
