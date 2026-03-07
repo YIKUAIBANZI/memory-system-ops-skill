@@ -31,11 +31,16 @@ When this skill is triggered, execute in this order:
 5. Update `TASKS.md` with only `在做 / 就绪 / 中断`.
    - If `中断`, must fill `Blocked by` and `Resume step`.
 6. After memory write-back, update `memory/keyword-frequency.md`.
-7. If the same rule/decision repeats >=3 times, compact and promote:
+7. Apply checkpoint policy (for `/new`-resilient mode):
+   - **Event trigger (mandatory):** on new preference/boundary, task state change, or key external action completion, append write-back immediately.
+   - **Pre-refresh trigger (mandatory):** before `/new` / `/reset` / context refresh, append a lightweight checkpoint first.
+   - **Periodic fallback (optional but recommended):** every 30–45 minutes, append a lightweight checkpoint with a min-interval guard (e.g., skip if last checkpoint < 25 minutes).
+   - If no new decisions, still write a minimal checkpoint (timestamp + TASKS snapshot).
+8. If the same rule/decision repeats >=3 times, compact and promote:
    - long-term preference -> `USER.md`
    - operational rule -> `agent-memory/common-info.md`
    - keep a reference link to original daily entries.
-8. Reply with verifiable evidence (file path + what changed), not vague claims.
+9. Reply with verifiable evidence (file path + what changed), not vague claims.
 
 Never skip step 3 for historical recall questions.
 
@@ -59,6 +64,21 @@ For key events, write:
 - optional: `RefID`, `Scope`, `Confidence`, `Tags`, `Aliases`
 
 When the user reports memory mismatch ("你没记住"), immediately show the exact stored location and verify against file content.
+
+## Checkpoint Standard (frequent `/new` support)
+
+Use this lightweight checkpoint block when there is no major new decision but state continuity is needed:
+- `RefID` (e.g., `AUTO-YYYYMMDD-XX`)
+- `Decision` (auto flush checkpoint)
+- `Why` (protect continuity before reset/switch)
+- `Impact` (recoverable context after reset)
+- `Next` (continue normal write-back loop)
+- `Verify`:
+  - checkpoint time
+  - `TASKS.md` snapshot counts (`在做/就绪/中断`)
+  - optional top active task IDs
+
+Goal: preserve recoverability without bloating daily notes.
 
 ## Retrieval Fallback Order
 
@@ -105,7 +125,8 @@ Always prefer verified answers over guessed answers.
 
 - Maintain keyword seeds manually in `memory/keyword-seeds.md`.
 - Generate stats to `memory/keyword-frequency.md` after each daily write-back.
-- Event-driven update only (no periodic cron requirement).
+- Default mode is event-driven.
+- For high-frequency `/new` workflows, you may enable optional periodic checkpoint mode; if enabled, keep a min-interval guard to avoid noisy duplicate entries.
 
 ## References
 
@@ -113,3 +134,4 @@ Always prefer verified answers over guessed answers.
 - Daily template: `references/daily-template.md`
 - Task board template: `references/tasks-template.md`
 - Efficiency notes: `references/efficiency-upgrades.md`
+- Checkpoint mode: `references/checkpoint-mode.md`

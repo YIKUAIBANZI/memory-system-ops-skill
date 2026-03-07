@@ -46,6 +46,7 @@ Typical long-running assistant problems:
 6. **Scope-guard retrieval**: narrow by user/project/date-range before broad scans.
 7. **Sufficiency-gated fallback**: stop at L1/L2 once evidence is enough; go to L3 only when needed.
 8. **Reference-friendly write-back**: optional `RefID` enables fast citation and audit trails.
+9. **`/new`-resilient checkpoint mode**: event-trigger + pre-refresh checkpoint + optional periodic fallback to prevent context-loss drift.
 
 > If an agent only does date-based lookup and ignores keyword lookup, it is using this skill incorrectly.
 
@@ -69,6 +70,12 @@ This skill now integrates lightweight versions of high-leverage memory patterns:
 - **Compaction rules**: repeated rules migrate to stable layers to reduce drift.
 
 These upgrades improve both recall speed and answer reliability without requiring a heavy database stack.
+
+For high-frequency context resets, enable **checkpoint mode**:
+- mandatory before `/new` / `/reset`
+- mandatory on key state changes
+- optional periodic fallback (30–45 min) with min-interval guard
+- minimal payload when no new decisions (timestamp + `TASKS` snapshot)
 
 ---
 
@@ -180,6 +187,7 @@ More templates:
 - [`references/tasks-template.md`](./references/tasks-template.md)
 - [`references/workflow.md`](./references/workflow.md)
 - [`references/efficiency-upgrades.md`](./references/efficiency-upgrades.md)
+- [`references/checkpoint-mode.md`](./references/checkpoint-mode.md)
 
 ---
 
@@ -225,8 +233,9 @@ Then place or symlink it into your agent skills path.
 4. Execute task / respond to user
 5. Write structured decision to daily memory (optional `RefID/Scope/Confidence`)
 6. Update task board state
-7. Archive completed tasks
-8. Run keyword tracking update (event-driven)
+7. Before `/new` or context refresh, append lightweight checkpoint (`AUTO-...`)
+8. Archive completed tasks
+9. Run keyword tracking update (event-driven default; optional periodic in checkpoint mode)
 
 ---
 

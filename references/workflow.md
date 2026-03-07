@@ -63,20 +63,27 @@ If `中断`, must fill:
 
 Completed tasks -> `TASKS_ARCHIVE/YYYY-MM.md`.
 
-## 6) Update keyword stats (event-driven)
+## 6) Update keyword stats (event-driven default)
 
 After daily write-back:
 - run keyword stats update
 - refresh `memory/keyword-frequency.md`
 
-## 7) Compact repeated rules
+## 7) Apply checkpoint policy (`/new`-resilient mode)
+
+- Event trigger: append immediately on new preference/boundary, task state change, or key external action completion.
+- Pre-refresh trigger: before `/new` / `/reset` / context refresh, append lightweight checkpoint first.
+- Optional periodic fallback: every 30–45 minutes with min-interval guard (e.g., skip when last checkpoint < 25 minutes).
+- If no new decisions, still append minimal checkpoint (timestamp + TASKS snapshot).
+
+## 8) Compact repeated rules
 
 If the same decision/rule appears >=3 times:
 - promote long-term preference to `USER.md`
 - promote process rule to `agent-memory/common-info.md`
 - keep source references for traceability
 
-## 8) Response format
+## 9) Response format
 
 Return with evidence:
 - what changed

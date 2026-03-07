@@ -52,3 +52,18 @@ When evidence is weak:
 - list the next retrieval step.
 
 This prevents false certainty and improves trust.
+
+## 6) `/new`-resilient checkpoint mode
+
+For high context-reset frequency, add lightweight checkpoints:
+- **Mandatory** before `/new` / `/reset` / context refresh.
+- **Mandatory** on key state changes (new preference, task state change, key external action).
+- **Optional** periodic fallback every 30–45 minutes.
+- Add min-interval guard to avoid noise (e.g., skip if last checkpoint < 25 minutes).
+
+Minimal checkpoint payload:
+- timestamp
+- active task snapshot (`在做/就绪/中断`)
+- optional top active task IDs
+
+This preserves recoverability without forcing heavy full summaries each time.
